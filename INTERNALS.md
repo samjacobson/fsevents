@@ -12,7 +12,10 @@ The API provides access to this system allowing applications to be notified of c
 The API uses the concept of a “Stream” (FSEventStream) which is a configurable stream of notifications. A Stream can recursively monitor many directories. Options like latency which allow the coalescing of events are specific to one stream.
 
 ## Persistent Monitoring
-The database kept by the File System Events API allow a program that is run periodically to check for changes to the file system between runs. This has a real impact on the API and why there are parameters like `since`. This feature should be considered “advisory” according to Apple’s docs, i.e. a full scan should be run periodically. e.g. if an older version of OS X modifies the file system (say, by removing the drive and putting it in another computer) it would not update that database.
+The database kept by the File System Events API allow a program that is run periodically to check for changes to the file system between runs. This has a real impact on the API and why there are parameters like `since`. This feature should be considered “advisory” according to Apple’s docs, i.e. a full scan should still be run periodically. e.g. if an older version of OS X modifies the file system (say, by removing the drive and putting it in another computer) it would not update the database.
+
+The `since` parameter must be an EventID for the host or device that the stream is for (or the special ALL or NOW values).
+To discover the EventID at a specific time the function `LastEventBefore` can be used (calls `FSEventsGetLastEventIdForDeviceBeforeTime`); provide dev==0 for a host EventID. Current() (calls FSEventsGetCurrentEventId) returns the most recent EventID.
 
 ## Apple Docs
 * [FSEvents_ProgGuide.pdf][https://developer.apple.com/library/mac/documentation/Darwin/Conceptual/FSEvents_ProgGuide/FSEvents_ProgGuide.pdf]
